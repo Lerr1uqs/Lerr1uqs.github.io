@@ -4,7 +4,7 @@ date: 2026-01-17T17:23:52+08:00
 # image: ""
 lastmod: 2026-01-17
 showTableOfContents: false
-# tags: ["",]
+tags: ["DQN", "RL"]
 title: "[DQN] 强化学习只狼"
 type: "post"
 mermaid: true

@@ -1,0 +1,51 @@
+baseURL = "https://Lerr1uqs.github.io" # 部署时这里非常重要，本地测试可忽略
+# baseURL = 'https://example.org/'
+languageCode = "zh-cn"
+title = "我的博客"
+theme = "gokarna"
+
+[params]
+  description = "个人学习记录"
+  avatarURL = "/images/avatar.png" # 头像图片需放在 static/images/ 目录下
+  AvatarAltText = "Avatar"
+  
+  # 开启深色模式切换
+  showThemeButton = true 
+
+  # 社交链接 (可选)
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/Lerr1uqs"
+  [[params.socialIcons]]
+    name = "email"
+    url = "mailto:Ler2sq@gmail.com"
+
+[markup]
+    [markup.goldmark]
+        [markup.goldmark.renderer]
+        unsafe = true # 允许在 Markdown 中使用 HTML
+        [markup.goldmark.extensions]
+            [markup.goldmark.extensions.passthrough]
+            enable = true
+            [markup.goldmark.extensions.passthrough.delimiters]
+                block = [['\[', '\]'], ['$$', '$$']]
+                inline = [['\(', '\)'], ['$', '$']]
+
+
+[menu]
+[[menu.main]]
+name = "Home"
+pre = "<span data-feather='home'></span>" # 可选：添加图标
+url = "/"
+weight = 1
+
+[[menu.main]]
+name = "Posts"
+pre = "<span data-feather='pen-tool'></span>" # 可选：添加图标
+url = "/posts/"
+weight = 2
+
+[[menu.main]]
+name = "Tags"
+pre = "<span data-feather='tag'></span>"
+url = "/tags/"

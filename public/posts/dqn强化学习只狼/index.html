@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+            --accent-color: #FF4D4D;
+            --font-size: 1.1rem;
+        }
+    </style>
+
+    
+    
+    
+    
+    
+    
+
+    
+    <title>Dqn强化学习只狼</title>
+    <meta name="description" content="强化学习打只狼代码：DQN_play_sekiro/README.md at main · analoganddigital/DQN_play_sekiro · GitHub 其他人写的pytorch版本：GitHub - Skaiyin/DQN_play_blood: DQN_play_sekiro
+DQN …">
+    <meta name="keywords" content=''>
+
+    <meta property="og:url" content="//localhost:1313/posts/dqn%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%8F%AA%E7%8B%BC/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Dqn强化学习只狼">
+    <meta property="og:description" content="强化学习打只狼代码：DQN_play_sekiro/README.md at main · analoganddigital/DQN_play_sekiro · GitHub 其他人写的pytorch版本：GitHub - Skaiyin/DQN_play_blood: DQN_play_sekiro
+DQN …">
+    <meta property="og:image" content="//localhost:1313/images/avatar.png">
+    <meta property="og:image:secure_url" content="//localhost:1313/images/avatar.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Dqn强化学习只狼">
+    <meta name="twitter:description" content="强化学习打只狼代码：DQN_play_sekiro/README.md at main · analoganddigital/DQN_play_sekiro · GitHub 其他人写的pytorch版本：GitHub - Skaiyin/DQN_play_blood: DQN_play_sekiro
+DQN …">
+    <meta property="twitter:domain" content="//localhost:1313/posts/dqn%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%8F%AA%E7%8B%BC/">
+    <meta property="twitter:url" content="//localhost:1313/posts/dqn%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%8F%AA%E7%8B%BC/">
+    <meta name="twitter:image" content="//localhost:1313/images/avatar.png">
+
+    
+    <link rel="canonical" href="//localhost:1313/posts/dqn%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%8F%AA%E7%8B%BC/">
+
+    
+    <link rel="stylesheet" type="text/css" href="/css/normalize.min.css" media="print">
+
+    
+    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
+
+    
+    <link id="dark-theme" rel="stylesheet" href="/css/dark.min.css">
+
+    
+    <script src="/js/bundle.min.b49aceda9eb0c4a1c26f79dde146ea75e2cbb4b320dcd0e2623cb4c195ee7af6.js" integrity="sha256-tJrO2p6wxKHCb3nd4UbqdeLLtLMg3NDiYjy0wZXuevY="></script>
+
+    
+    
+</head>
+<body>
+        <script>
+            
+            setThemeByUserPref();
+        </script><header class="header">
+    <nav class="header-nav">
+
+        
+        <div class="avatar">
+            <a href="//localhost:1313/">
+                <img src='/images/avatar.png' alt="Avatar">
+            </a>
+        </div>
+        
+
+        <div class="nav-title">
+            <a class="nav-brand" href="//localhost:1313/">我的博客</a>
+        </div>
+
+        <div class="nav-links">
+            
+            <div class="nav-link">
+                <a href="//localhost:1313/" aria-label="" ><span data-feather='home'></span> Home </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="//localhost:1313/posts/" aria-label="" ><span data-feather='pen-tool'></span> Posts </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="//localhost:1313/tags/" aria-label="" ><span data-feather='tag'></span> Tags </a>
+            </div>
+            
+
+            <span class="nav-icons-divider"></span>
+            <div class="nav-link dark-theme-toggle">
+                <span class="sr-only dark-theme-toggle-screen-reader-target">theme</span>
+                <a aria-hidden="true" role="switch">
+                    <span class="theme-toggle-icon" data-feather="moon"></span>
+                </a>
+            </div>
+
+            <div class="nav-link" id="hamburger-menu-toggle">
+                <span class="sr-only hamburger-menu-toggle-screen-reader-target">menu</span>
+                <a aria-checked="false" aria-labelledby="hamburger-menu-toggle" id="hamburger-menu-toggle-target" role="switch">
+                    <span data-feather="menu"></span>
+                </a>
+            </div>
+
+            
+            <ul class="nav-hamburger-list visibility-hidden">
+                
+                <li class="nav-item">
+                    <a href="//localhost:1313/" ><span data-feather='home'></span> Home </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="//localhost:1313/posts/" ><span data-feather='pen-tool'></span> Posts </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="//localhost:1313/tags/" ><span data-feather='tag'></span> Tags </a>
+                </li>
+                
+                <li class="nav-item dark-theme-toggle">
+                    <span class="sr-only dark-theme-toggle-screen-reader-target">theme</span>
+                    <a role="switch">
+                        <span class="theme-toggle-icon" data-feather="moon"></span>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+</header>
+<main id="content">
+    <div class="post container">
+    <div class="post-header-section">
+        <h1>Dqn强化学习只狼</h1>
+
+        
+
+        
+	
+	
+	
+	
+        
+
+	
+
+	
+
+	
+          <small role="doc-subtitle"></small>
+	
+
+	
+          <p class="post-date">
+              
+
+              January 17, 2026
+
+              
+          </p>
+	
+
+        <ul class="post-tags">
+          
+        </ul>
+    </div>
+
+    <div class="post-content">
+        <p>强化学习打只狼代码：<a href="https://github.com/analoganddigital/DQN_play_sekiro/blob/main/README.md">DQN_play_sekiro/README.md at main · analoganddigital/DQN_play_sekiro · GitHub</a>
+其他人写的pytorch版本：<a href="https://github.com/Skaiyin/DQN_play_blood">GitHub - Skaiyin/DQN_play_blood: DQN_play_sekiro</a></p>
+<h1 id="dqn-recon">DQN recon</h1>
+<ul>
+<li>两个网络：目标网络+当前网络</li>
+<li>policy：off-policy(有经验回放)</li>
+<li>ε-greedy 探索</li>
+</ul>
+<p>网络输入：灰度图像(CNN图像特征提取)
+网络输出：action-id</p>
+<h1 id="实现">实现</h1>
+<h2 id="action空间">action空间</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Action 值</th>
+          <th>按键</th>
+          <th>功能</th>
+          <th>描述</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>0</td>
+          <td>-</td>
+          <td>n_choose</td>
+          <td>不做任何操作</td>
+      </tr>
+      <tr>
+          <td>1</td>
+          <td>J</td>
+          <td>attack</td>
+          <td>攻击</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>K</td>
+          <td>jump</td>
+          <td>跳跃</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>M</td>
+          <td>defense</td>
+          <td>防御</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>R</td>
+          <td>dodge</td>
+          <td>闪避</td>
+      </tr>
+  </tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">take_action</span>(action): 
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> action <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:     <span style="color:#75715e"># n_choose </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">pass</span> 
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">elif</span> action <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>:   <span style="color:#75715e"># j </span>
+</span></span><span style="display:flex;"><span>          directkeys<span style="color:#f92672">.</span>attack() 
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">elif</span> action <span style="color:#f92672">==</span> <span style="color:#ae81ff">2</span>:   <span style="color:#75715e"># k </span>
+</span></span><span style="display:flex;"><span>          directkeys<span style="color:#f92672">.</span>jump() 
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">elif</span> action <span style="color:#f92672">==</span> <span style="color:#ae81ff">3</span>:   <span style="color:#75715e"># m </span>
+</span></span><span style="display:flex;"><span>          directkeys<span style="color:#f92672">.</span>defense() 
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">elif</span> action <span style="color:#f92672">==</span> <span style="color:#ae81ff">4</span>:   <span style="color:#75715e"># r </span>
+</span></span><span style="display:flex;"><span>          directkeys<span style="color:#f92672">.</span>dodge() 
+</span></span></code></pre></div><h2 id="cnn-dqn">cnn-dqn</h2>
+<p>视频的输入输出 灰度图像
+只选中一小块 降低识别难度：</p>
+<ul>
+<li>WIDTH = 96</li>
+<li>HEIGHT = 88</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>层</th>
+          <th>类型</th>
+          <th>参数</th>
+          <th>输出维度</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Input</td>
+          <td>-</td>
+          <td>-</td>
+          <td><code>[None, 88, 96, 1]</code></td>
+      </tr>
+      <tr>
+          <td>Conv1</td>
+          <td>Conv2D + ReLU</td>
+          <td>5×5×1→32</td>
+          <td><code>[None, 88, 96, 32]</code></td>
+      </tr>
+      <tr>
+          <td>Pool1</td>
+          <td>MaxPool</td>
+          <td>2×2</td>
+          <td><code>[None, 44, 48, 32]</code></td>
+      </tr>
+      <tr>
+          <td>Conv2</td>
+          <td>Conv2D + ReLU</td>
+          <td>5×5×32→64</td>
+          <td><code>[None, 44, 48, 64]</code></td>
+      </tr>
+      <tr>
+          <td>Pool2</td>
+          <td>MaxPool</td>
+          <td>2×2</td>
+          <td><code>[None, 22, 24, 64]</code></td>
+      </tr>
+      <tr>
+          <td>Flatten</td>
+          <td>Reshape</td>
+          <td>-</td>
+          <td><code>[None, 33696]</code></td>
+      </tr>
+      <tr>
+          <td>FC1</td>
+          <td>Dense + ReLU + Dropout</td>
+          <td>33696→512</td>
+          <td><code>[None, 512]</code></td>
+      </tr>
+      <tr>
+          <td>FC2</td>
+          <td>Dense + ReLU + Dropout</td>
+          <td>512→256</td>
+          <td><code>[None, 256]</code></td>
+      </tr>
+      <tr>
+          <td>Output</td>
+          <td>Dense + Dropout</td>
+          <td>256→5</td>
+          <td><code>[None, 5]</code></td>
+      </tr>
+  </tbody>
+</table>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph LR
+    Input[&#34;Input (None, 88, 96, 1)&#34;] --&gt; Conv1[&#34;Conv2D 5x5x1x32&#34;]
+    Conv1 --&gt; Pool1[&#34;MaxPool 2x2&#34;]
+    Pool1 --&gt; Conv2[&#34;Conv2D 5x5x32x64&#34;]
+    Conv2 --&gt; Pool2[&#34;MaxPool 2x2&#34;]
+    Pool2 --&gt; Flatten[&#34;Flatten&#34;]
+    Flatten --&gt; FC1[&#34;FC Layer 1 (33696 → 512)&#34;]
+    FC1 --&gt; FC2[&#34;FC Layer 2 (512 → 256)&#34;]
+    FC2 --&gt; Output[&#34;Output (256 → 5)&#34;]
+
+    style Input fill:#e1f5ff
+    style Output fill:#c8e6c9
+    style Conv1 fill:#fff3e0
+    style Conv2 fill:#fff3e0
+    style Pool1 fill:#fce4ec
+    style Pool2 fill:#fce4ec
+    style FC1 fill:#f3e5f5
+    style FC2 fill:#f3e5f5
+</code></pre><p>特点：</p>
+<ul>
+<li>使用 <strong>SAME padding</strong> 保持特征图尺寸</li>
+<li>两次 <strong>2×2 最大池化</strong>，特征图尺寸减半两次 (88×96 → 22×24)</li>
+<li>全连接层使用 <strong>Dropout</strong> 防止过拟合 (keep_prob=1，即未启用)</li>
+</ul>
+<p>注意：</p>
+<ul>
+<li>这里两个pool(conv(x))是cnn的一部分 两个fc是dqn的一部分 整个连起来就是一个真实的Q(s, a)网络 输出的是Q值 每一个s对应5个a值</li>
+<li>其中None是动态可变的batch_size</li>
+<li>Flatten 层的作用是将多维张量展平为一维向量。</li>
+<li>Dense 也叫 Fully Connected Layer（全连接层）</li>
+</ul>
+<pre tabindex="0"><code>DQN（Deep Q-Network）= 完整的强化学习网络
+├── CNN 部分（特征提取）
+│   ├── Conv1 + Pool1
+│   └── Conv2 + Pool2
+└── 全连接部分（Q 值预测）
+    ├── FC1
+    ├── FC2
+    └── Output (Q 值)
+</code></pre><h2 id="血量的捕获">血量的捕获</h2>
+<p>通过运行“Found Blood Locations”文件，去调整代码中的“Blood Windows”参数，以确保捕获框能准确覆盖游戏角色（如BOSS“玄一郎”）的血条区域。</p>
+<p>通过这几个库实现框定位 截图 转换为灰度图像</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> win32gui<span style="color:#f92672">,</span> win32ui<span style="color:#f92672">,</span> win32con<span style="color:#f92672">,</span> win32api
+</span></span></code></pre></div><p>然后通过灰度值的pixel数量进行血量建模</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">boss_blood_count</span>(boss_gray):
+</span></span><span style="display:flex;"><span>    boss_blood <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> boss_bd_num <span style="color:#f92672">in</span> boss_gray[<span style="color:#ae81ff">0</span>]:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># boss blood gray pixel 65~75</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 血量灰度值65~75 </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> boss_bd_num <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">65</span> <span style="color:#f92672">and</span> boss_bd_num <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">75</span>:
+</span></span><span style="display:flex;"><span>            boss_blood <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> boss_blood
+</span></span></code></pre></div><p>工作原理图示</p>
+<pre tabindex="0"><code>   1 血条图像（灰度）：
+   2 ┌─────────────────────────────┐
+   3 │ ████████████░░░░░░░░░░░░░░  │  ← boss_gray[0] 第一行
+   4 └─────────────────────────────┘
+   5   ↑          ↑
+   6   █ = 65~75  ░ = 其他灰度值
+   7
+   8 统计 █ 的数量 → boss_blood
+</code></pre><h2 id="键盘监听">键盘监听</h2>
+<p>每一轮监控这几个按键 应该是想中途停止 不过貌似作者没写对</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> win32api <span style="color:#66d9ef">as</span> wapi
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> time
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>keyList <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\b</span><span style="color:#e6db74">&#34;</span>]
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> char <span style="color:#f92672">in</span> <span style="color:#e6db74">&#34;ABCDEFGHIJKLMNOPQRSTUVWXYZ 123456789,.&#39;£$/</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">&#34;</span>:
+</span></span><span style="display:flex;"><span>    keyList<span style="color:#f92672">.</span>append(char)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">key_check</span>():
+</span></span><span style="display:flex;"><span>    keys <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> key <span style="color:#f92672">in</span> keyList:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> wapi<span style="color:#f92672">.</span>GetAsyncKeyState(ord(key)):
+</span></span><span style="display:flex;"><span>            keys<span style="color:#f92672">.</span>append(key)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> keys
+</span></span></code></pre></div><h2 id="主流程伪代码">主流程伪代码</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> episode <span style="color:#f92672">in</span> EPISODES:    
+</span></span><span style="display:flex;"><span>  state <span style="color:#f92672">=</span> env<span style="color:#f92672">.</span>reset()       
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">while</span> <span style="color:#f92672">not</span> done:           
+</span></span><span style="display:flex;"><span>    action <span style="color:#f92672">=</span> agent<span style="color:#f92672">.</span>choose()     
+</span></span><span style="display:flex;"><span>    next_state, reward, done <span style="color:#f92672">=</span> env<span style="color:#f92672">.</span>step(action)
+</span></span><span style="display:flex;"><span>    buffer<span style="color:#f92672">.</span>add(state, action, reward, next_state, done)         
+</span></span><span style="display:flex;"><span>    agent<span style="color:#f92672">.</span>train()           
+</span></span><span style="display:flex;"><span>    agent<span style="color:#f92672">.</span>update_target()   
+</span></span><span style="display:flex;"><span>  agent<span style="color:#f92672">.</span>save()              
+</span></span><span style="display:flex;"><span>  env<span style="color:#f92672">.</span>restart()   
+</span></span></code></pre></div><h2 id="reward建模">reward建模</h2>
+<p>作者的reward写的不忍直视 可能还写错了。这里不结合代码只做一个简单分析：</p>
+<ul>
+<li>角色死亡：next_self_blood &lt; 某个值：reward = -10</li>
+<li>Boss死亡：next_boss_blood &lt; 某个值：reward = 20</li>
+<li>角色掉血：next_self_blood &lt; self_blood - 某个阈值：reward = -6</li>
+<li>Boss掉血：next_boss_blood &lt; boss_blood - 某个阈值：reward = 4</li>
+</ul>
+
+        
+    </div>
+
+    <div class="prev-next">
+        
+    </div>
+
+    
+    
+    
+</div>
+
+
+
+    
+
+        </main><footer class="footer">
+    
+    
+
+    
+
+    
+
+    
+
+    <span>
+        Made with &#10084;&#65039; using <a target="_blank" href="https://github.com/gokarna-theme/gokarna-hugo">Gokarna</a>
+    </span>
+</footer>
+</body>
+</html>

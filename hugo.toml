@@ -1,7 +1,7 @@
 baseURL = "https://Lerr1uqs.github.io" # 部署时这里非常重要，本地测试可忽略
 # baseURL = 'https://example.org/'
 languageCode = "zh-cn"
-title = "我的博客"
+title = "Lerr1uqs"
 theme = "gokarna"
 
 [params]

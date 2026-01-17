@@ -191,8 +191,8 @@ for episode in EPISODES:
 
 ## reward建模
 
-作者的reward写的不忍直视 可能还写错了。这里不结合代码只做一个简单分析：
+作者的reward写的有点乱 这里用文字表述：
 - 角色死亡：next_self_blood < 某个值：reward = -10
-- Boss死亡：next_boss_blood < 某个值：reward = 20
+- Boss死亡：next_boss_blood > boss_blood：reward = 20 (这里特别注意 玄一郎是有三条命的 所以血回复了就是击杀了)
 - 角色掉血：next_self_blood < self_blood - 某个阈值：reward = -6
 - Boss掉血：next_boss_blood < boss_blood - 某个阈值：reward = 4

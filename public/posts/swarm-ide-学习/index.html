@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+            --accent-color: #FF4D4D;
+            --font-size: 1.1rem;
+        }
+    </style>
+
+    
+    
+    
+    
+    
+    
+
+    
+    <title>Swarm Ide 学习</title>
+    <meta name="description" content="what/why/how What- Swarm‑IDE 是一个“多 Agent 即时通讯 &#43; 协作可视化”的 Web 应用：可以动态创建子代理、与任意代理对话，并用实时图谱/上下文面板看到协作链路与推理过程。- 以 workspace/agent/group/message 为基本模型，提供微信式多会话 …">
+    <meta name="keywords" content=''>
+
+    <meta property="og:url" content="http://localhost:1313/posts/swarm-ide-%E5%AD%A6%E4%B9%A0/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Swarm Ide 学习">
+    <meta property="og:description" content="what/why/how What- Swarm‑IDE 是一个“多 Agent 即时通讯 &#43; 协作可视化”的 Web 应用：可以动态创建子代理、与任意代理对话，并用实时图谱/上下文面板看到协作链路与推理过程。- 以 workspace/agent/group/message 为基本模型，提供微信式多会话 …">
+    <meta property="og:image" content="http://localhost:1313/images/avatar.png">
+    <meta property="og:image:secure_url" content="http://localhost:1313/images/avatar.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Swarm Ide 学习">
+    <meta name="twitter:description" content="what/why/how What- Swarm‑IDE 是一个“多 Agent 即时通讯 &#43; 协作可视化”的 Web 应用：可以动态创建子代理、与任意代理对话，并用实时图谱/上下文面板看到协作链路与推理过程。- 以 workspace/agent/group/message 为基本模型，提供微信式多会话 …">
+    <meta property="twitter:domain" content="http://localhost:1313/posts/swarm-ide-%E5%AD%A6%E4%B9%A0/">
+    <meta property="twitter:url" content="http://localhost:1313/posts/swarm-ide-%E5%AD%A6%E4%B9%A0/">
+    <meta name="twitter:image" content="http://localhost:1313/images/avatar.png">
+
+    
+    <link rel="canonical" href="http://localhost:1313/posts/swarm-ide-%E5%AD%A6%E4%B9%A0/">
+
+    
+    <link rel="stylesheet" type="text/css" href="/css/normalize.min.css" media="print">
+
+    
+    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
+
+    
+    <link id="dark-theme" rel="stylesheet" href="/css/dark.min.css">
+
+    
+    <script src="/js/bundle.min.b49aceda9eb0c4a1c26f79dde146ea75e2cbb4b320dcd0e2623cb4c195ee7af6.js" integrity="sha256-tJrO2p6wxKHCb3nd4UbqdeLLtLMg3NDiYjy0wZXuevY="></script>
+
+    
+    
+
+    
+    <script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+        <script>
+            
+            setThemeByUserPref();
+        </script><header class="header">
+    <nav class="header-nav">
+
+        
+        <div class="avatar">
+            <a href="http://localhost:1313/">
+                <img src='/images/avatar.png' alt="Avatar">
+            </a>
+        </div>
+        
+
+        <div class="nav-title">
+            <a class="nav-brand" href="http://localhost:1313/">Lerr1uqs</a>
+        </div>
+
+        <div class="nav-links">
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/" aria-label="" ><span data-feather='home'></span> Home </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/posts/" aria-label="" ><span data-feather='pen-tool'></span> Posts </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/tags/" aria-label="" ><span data-feather='tag'></span> Tags </a>
+            </div>
+            
+
+            <span class="nav-icons-divider"></span>
+            <div class="nav-link dark-theme-toggle">
+                <span class="sr-only dark-theme-toggle-screen-reader-target">theme</span>
+                <a aria-hidden="true" role="switch">
+                    <span class="theme-toggle-icon" data-feather="moon"></span>
+                </a>
+            </div>
+
+            <div class="nav-link" id="hamburger-menu-toggle">
+                <span class="sr-only hamburger-menu-toggle-screen-reader-target">menu</span>
+                <a aria-checked="false" aria-labelledby="hamburger-menu-toggle" id="hamburger-menu-toggle-target" role="switch">
+                    <span data-feather="menu"></span>
+                </a>
+            </div>
+
+            
+            <ul class="nav-hamburger-list visibility-hidden">
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/" ><span data-feather='home'></span> Home </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/posts/" ><span data-feather='pen-tool'></span> Posts </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/tags/" ><span data-feather='tag'></span> Tags </a>
+                </li>
+                
+                <li class="nav-item dark-theme-toggle">
+                    <span class="sr-only dark-theme-toggle-screen-reader-target">theme</span>
+                    <a role="switch">
+                        <span class="theme-toggle-icon" data-feather="moon"></span>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+</header>
+<main id="content">
+    <div class="post container">
+    <div class="post-header-section">
+        <h1>Swarm Ide 学习</h1>
+
+        
+
+        
+	
+	
+	
+	
+        
+
+	
+
+	
+
+	
+          <small role="doc-subtitle"></small>
+	
+
+	
+          <p class="post-date">
+              
+
+              February 5, 2026
+
+              
+          </p>
+	
+
+        <ul class="post-tags">
+          
+        </ul>
+    </div>
+
+    <div class="post-content">
+        <h1 id="whatwhyhow">what/why/how</h1>
+<pre tabindex="0"><code>  What
+
+  - Swarm‑IDE 是一个“多 Agent 即时通讯 + 协作可视化”的 Web 应用：可以动态创建子代理、与任意代理对话，并用实时图谱/上下文
+    面板看到协作链路与推理过程。
+  - 以 workspace/agent/group/message 为基本模型，提供微信式多会话 UI、LLM history 面板、工具调用流的实时展示。
+
+  Why
+
+  - 解决多 Agent 协作“黑箱化”和不可控的问题：让拓扑可观察、可介入、可调试。
+  - 以“极简通信原语（create + send）”支持自组织、动态演化的协作结构。
+
+  How
+
+  - 事件驱动的 Agent Runtime：拉取未读 → 流式调用 LLM → 工具调用 → 结果回写历史 → UI 事件广播。
+  - 通过 SSE 把 agent 的推理/工具调用/消息流实时推送到 UI。
+  - UI 端用图谱 + 树状会话列表 + 历史上下文面板来展示协作状态，并支持人类随时介入任意层级。
+</code></pre><h1 id="agent组织架构">Agent组织架构</h1>
+<pre tabindex="0"><code>   // 三层数据聚合
+   1. agents: 节点层（Agent 元数据）
+   2. groups: 关系层（群组成员关系）
+   3. messages: 交互层（消息流向与频次）
+</code></pre><pre tabindex="0"><code>   Workspace A
+   ├── Agents
+   │   ├── human-001 (用户)
+   │   ├── assistant-001 (助手)
+   │   └── coder-001 (编程子代理，parentId=assistant-001)
+   │
+   └── Groups
+       ├── group-1 (默认对话)
+       │   └── members: [human-001, assistant-001]
+       │
+       ├── group-2 (编程对话)
+       │   └── members: [human-001, coder-001, assistant-001]
+       │
+       └── group-3 (子代理协作)
+           └── members: [coder-001, assistant-001]
+</code></pre><p>sql中的表</p>
+<pre tabindex="0"><code>   agents (Agent 表)
+     ├─ id (主键)
+     ├─ workspaceId (外键 → workspaces)
+     ├─ role (&#34;human&#34;/&#34;assistant&#34;/&#34;sub-agent&#34;)
+     └─ parentId (外键 → agents.id，用于层级)
+
+   groups (群组表)
+     ├─ id (主键)
+     ├─ workspaceId (外键 → workspaces)
+     ├─ name (群组名称)
+     └─ contextTokens (上下文 token 计数)
+
+   groupMembers (多对多关系表)  ⭐ 核心表
+     ├─ groupId (外键 → groups.id)
+     ├─ userId (外键 → agents.id)  // 注意这里实际引用的是 agents.id
+     ├─ lastReadMessageId (已读消息指针)
+     └─ joinedAt (加入时间)
+     └─ PRIMARY KEY (groupId, userId)
+</code></pre><p>AgentRuntime：单一全局实例 管理全局agent
+AgentRunner：agent的运行wrapper 通过事件驱动唤醒</p>
+<h1 id="事件总线">事件总线</h1>
+<p>每一个agent都带一个 <code>AgentEventBus</code> - 代理事件总线 这个主要是记录运行时轨迹 方便调试
+自己发送 <code>AgentEvent</code> :</p>
+<ul>
+<li><code>agent.wakeup</code>：Agent 被唤醒（带 agentId、可选 reason）</li>
+<li><code>agent.unread</code>：有未读消息批次（带 agentId、groupId、messageIds）</li>
+<li><code>agent.stream</code>：流式输出片段（reasoning/content/tool_calls/tool_result 等）</li>
+<li><code>agent.done</code>：Agent 结束（可选 finishReason）</li>
+<li><code>agent.error</code>：发生错误（带 message）</li>
+</ul>
+<p>全部进程有 <code>WorkspaceUIBus</code> 实例</p>
+<h1 id="agent关键运行逻辑循环">agent关键运行逻辑循环</h1>
+<p>被唤醒后 直接按react完成任务</p>
+<pre tabindex="0"><code>   - wakeup() - 唤醒 agent（支持 manual、group_message、direct_message、context_stream        
+     等原因）
+   - processUntilIdle() - 持续处理所有未读消息，直到无新消息
+   - runWithTools() - 处理 LLM 调用和工具执行循环（最多 3 轮）
+</code></pre><h1 id="消息传递流程图">消息传递流程图</h1>
+<p>注意 Agent完成工作后不会自动回复 除非手动继续调用send</p>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">sequenceDiagram
+  autonumber
+  participant RT as AgentRuntime (sender agent)
+  participant RT2 as AgentRuntime (target)
+  participant RunnerT as AgentRunner (target)
+  participant LLM as LLM Provider
+
+  Note over RT: Sender agent executes tool send_group_message / send_direct_message
+  RT-&gt;&gt;RT2: deliver message (group or direct)
+
+  alt group message
+    RT2-&gt;&gt;RunnerT: wakeup(group_message)
+  else direct message
+    RT2-&gt;&gt;RunnerT: wakeup(direct_message)
+  end
+
+  RunnerT-&gt;&gt;RunnerT: read unread messages
+  RunnerT-&gt;&gt;LLM: stream call (tools enabled)
+  LLM--&gt;&gt;RunnerT: tokens / tool_calls / finish
+  RunnerT-&gt;&gt;RunnerT: append history
+
+  opt Agent replies (tool call send_group_message / send_direct_message)
+    RunnerT-&gt;&gt;RT2: deliver reply (group or direct)
+    RT2-&gt;&gt;RunnerT: wakeup(targets)
+  end
+</code></pre><h1 id="agent的工具">agent的工具</h1>
+<table>
+  <thead>
+      <tr>
+          <th>名字</th>
+          <th>用途（主要做什么）</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>create</td>
+          <td>创建一个子 Agent（指定 role，可选 guidance），用于任务委派；返回 <code>{agentId}</code></td>
+      </tr>
+      <tr>
+          <td>self</td>
+          <td>查询当前 Agent 的身份信息（<code>agent_id / workspace_id / role</code>）</td>
+      </tr>
+      <tr>
+          <td>list_agents</td>
+          <td>列出当前 workspace 里的所有 Agent（id + role）</td>
+      </tr>
+      <tr>
+          <td>send</td>
+          <td>给指定 <code>agent_id</code> 发私信（自动创建/选择 IM group）</td>
+      </tr>
+      <tr>
+          <td>list_groups</td>
+          <td>列出当前 Agent 可见的群组（groups）</td>
+      </tr>
+      <tr>
+          <td>list_group_members</td>
+          <td>查看某个群组的成员 id 列表（按 <code>groupId</code>）</td>
+      </tr>
+      <tr>
+          <td>create_group</td>
+          <td>创建一个群组（给定 memberIds，可选 name）</td>
+      </tr>
+      <tr>
+          <td>send_group_message</td>
+          <td>往某个群组发消息（按 <code>groupId</code>，可带 <code>contentType</code>）</td>
+      </tr>
+      <tr>
+          <td>send_direct_message</td>
+          <td>给另一个 Agent 发“直聊消息”（自动创建/复用 P2P group，并返回 channel type，可带 <code>contentType</code>）</td>
+      </tr>
+      <tr>
+          <td>get_group_messages</td>
+          <td>拉取某个群组的完整历史消息（按 <code>groupId</code>）</td>
+      </tr>
+      <tr>
+          <td>bash</td>
+          <td>在服务器上执行 shell 命令（调试/文件操作等），返回 stdout/stderr/exitCode（可选 cwd/timeout/maxOutput）</td>
+      </tr>
+  </tbody>
+</table>
+<h1 id="主要接口">主要接口</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>&gt; ls .<span style="color:#ae81ff">\b</span>ackend<span style="color:#ae81ff">\a</span>pp<span style="color:#ae81ff">\a</span>pi<span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    Directory: F:<span style="color:#ae81ff">\c</span>oding-workspace<span style="color:#ae81ff">\l</span>earning-projects<span style="color:#ae81ff">\s</span>warm-ide<span style="color:#ae81ff">\b</span>ackend<span style="color:#ae81ff">\a</span>pp<span style="color:#ae81ff">\a</span>pi
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Mode                 LastWriteTime         Length Name
+</span></span><span style="display:flex;"><span>----                 -------------         ------ ----
+</span></span><span style="display:flex;"><span>d----           2026/1/31    20:01                admin
+</span></span><span style="display:flex;"><span>d----           2026/1/31    20:01                agent-graph
+</span></span><span style="display:flex;"><span>d----           2026/1/31    20:01                agents
+</span></span><span style="display:flex;"><span>d----           2026/1/31    20:01                config
+</span></span><span style="display:flex;"><span>d----           2026/1/31    20:01                debug
+</span></span><span style="display:flex;"><span>d----           2026/1/31    20:01                glm
+</span></span><span style="display:flex;"><span>d----           2026/1/31    20:01                groups
+</span></span><span style="display:flex;"><span>d----           2026/1/31    20:01                health
+</span></span><span style="display:flex;"><span>d----           2026/1/31    20:01                search
+</span></span><span style="display:flex;"><span>d----           2026/1/31    20:01                ui-stream
+</span></span><span style="display:flex;"><span>d----           2026/1/31    20:01                workspaces
+</span></span></code></pre></div><h1 id="agent消息处理">agent消息处理</h1>
+<ul>
+<li>AgentRunner.processGroupUnread 会把同一群组内的未读消息拼成一条 role: &ldquo;user&rdquo; 的历史记录<br>
+<code>[group:{groupId}] {senderId}: {content}</code>
+见 backend/src/runtime/agent-runtime.ts</li>
+<li>llm_history 是每个 Agent 全局的，不区分群组；因此多个群的消息会依次追加到同一个历史里，见</li>
+<li>未读拉取按群组批次处理，群组之间的顺序取决于 listUnreadByGroup 遍历顺序（数据库返回顺序，
+未显式排序）。</li>
+</ul>
+<h1 id="总结">总结</h1>
+<p>假设 A B C 在一个群组 A -&gt; C 发送消息。 B也会被唤醒。 （send_group_message）</p>
+<p>AgentRunner在协程里在等待唤醒</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">loop() {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (<span style="color:#66d9ef">true</span>) {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">wake</span>.<span style="color:#a6e22e">promise</span>; <span style="color:#75715e">// &lt;-- 在这里阻塞
+</span></span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">running</span>) <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">running</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">processUntilIdle</span>();
+</span></span><span style="display:flex;"><span>      } <span style="color:#66d9ef">finally</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">running</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>;
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><p>然后会简单的append的到messages中去</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">userContent</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">unreadMessages</span>
+</span></span><span style="display:flex;"><span>      .<span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">m</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">`[group:</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">groupId</span><span style="color:#e6db74">}</span><span style="color:#e6db74">] </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">senderId</span><span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">content</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+</span></span><span style="display:flex;"><span>      .<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#34;\n&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">history</span>.<span style="color:#a6e22e">push</span>({ <span style="color:#a6e22e">role</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;user&#34;</span>, <span style="color:#a6e22e">content</span>: <span style="color:#66d9ef">userContent</span> });
+</span></span></code></pre></div><p>群组消息，共享在群组全部agent的上下文中，只有对应agent自己的工具调用才在自己的上下文。</p>
+
+        
+    </div>
+
+    <div class="prev-next">
+        
+    </div>
+
+    
+    
+    
+</div>
+
+
+  
+<script type="module">  
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; 
+    mermaid.initialize({ startOnLoad: true });  
+</script>  
+<script>  
+    
+    Array.from(document.getElementsByClassName("language-mermaid")).forEach(  
+        (el) => {  
+            el.parentElement.outerHTML = `<div class="mermaid">${el.innerHTML}</div>`;  
+        }  
+    );  
+</script>  
+<style>  
+       
+    .mermaid svg {  
+        display: block;  
+        margin: auto;  
+    }  
+</style>  
+
+
+    
+
+        </main><footer class="footer">
+    
+    
+
+    
+
+    
+
+    
+
+    <span>
+        Made with &#10084;&#65039; using <a target="_blank" href="https://github.com/gokarna-theme/gokarna-hugo">Gokarna</a>
+    </span>
+</footer>
+</body>
+</html>

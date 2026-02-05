@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Lerr1uqs</title>
-    <link>http://localhost:1313/</link>
-    <description>Recent content on Lerr1uqs</description>
+    <title>DQN on Lerr1uqs</title>
+    <link>http://localhost:1313/tags/dqn/</link>
+    <description>Recent content in DQN on Lerr1uqs</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 05 Feb 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Swarm Ide 学习</title>
-      <link>http://localhost:1313/posts/swarm-ide-%E5%AD%A6%E4%B9%A0/</link>
-      <pubDate>Thu, 05 Feb 2026 22:40:03 +0800</pubDate>
-      <guid>http://localhost:1313/posts/swarm-ide-%E5%AD%A6%E4%B9%A0/</guid>
-      <description>&lt;h1 id=&#34;whatwhyhow&#34;&gt;what/why/how&lt;/h1&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;  What&#xD;&#xA;&#xD;&#xA;  - Swarm‑IDE 是一个“多 Agent 即时通讯 + 协作可视化”的 Web 应用：可以动态创建子代理、与任意代理对话，并用实时图谱/上下文&#xD;&#xA;    面板看到协作链路与推理过程。&#xD;&#xA;  - 以 workspace/agent/group/message 为基本模型，提供微信式多会话 UI、LLM history 面板、工具调用流的实时展示。&#xD;&#xA;&#xD;&#xA;  Why&#xD;&#xA;&#xD;&#xA;  - 解决多 Agent 协作“黑箱化”和不可控的问题：让拓扑可观察、可介入、可调试。&#xD;&#xA;  - 以“极简通信原语（create + send）”支持自组织、动态演化的协作结构。&#xD;&#xA;&#xD;&#xA;  How&#xD;&#xA;&#xD;&#xA;  - 事件驱动的 Agent Runtime：拉取未读 → 流式调用 LLM → 工具调用 → 结果回写历史 → UI 事件广播。&#xD;&#xA;  - 通过 SSE 把 agent 的推理/工具调用/消息流实时推送到 UI。&#xD;&#xA;  - UI 端用图谱 + 树状会话列表 + 历史上下文面板来展示协作状态，并支持人类随时介入任意层级。&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;h1 id=&#34;agent组织架构&#34;&gt;Agent组织架构&lt;/h1&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;   // 三层数据聚合&#xD;&#xA;   1. agents: 节点层（Agent 元数据）&#xD;&#xA;   2. groups: 关系层（群组成员关系）&#xD;&#xA;   3. messages: 交互层（消息流向与频次）&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;   Workspace A&#xD;&#xA;   ├── Agents&#xD;&#xA;   │   ├── human-001 (用户)&#xD;&#xA;   │   ├── assistant-001 (助手)&#xD;&#xA;   │   └── coder-001 (编程子代理，parentId=assistant-001)&#xD;&#xA;   │&#xD;&#xA;   └── Groups&#xD;&#xA;       ├── group-1 (默认对话)&#xD;&#xA;       │   └── members: [human-001, assistant-001]&#xD;&#xA;       │&#xD;&#xA;       ├── group-2 (编程对话)&#xD;&#xA;       │   └── members: [human-001, coder-001, assistant-001]&#xD;&#xA;       │&#xD;&#xA;       └── group-3 (子代理协作)&#xD;&#xA;           └── members: [coder-001, assistant-001]&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;sql中的表&lt;/p&gt;</description>
-    </item>
+    <lastBuildDate>Sat, 17 Jan 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/dqn/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>[DQN] 强化学习只狼</title>
       <link>http://localhost:1313/posts/dqn-%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%8F%AA%E7%8B%BC/</link>

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+            --accent-color: #FF4D4D;
+            --font-size: 1.1rem;
+        }
+    </style>
+
+    
+    
+    
+    
+    
+    
+
+    
+    <title>AlphaGPT Analysis</title>
+    <meta name="description" content="介绍 AlphaGPT 是面向 Solana meme 生态的量化交易系统，采用分层流水线：
+从外部 API 采集行情与代币数据并写入 Postgres/Timescale。 特征工程 &#43; 公式生成训练（AlphaGPT 模型 &#43; StackVM &#43; 回测）。 AlphaGPT transformer模型 输出逆波兰的 …">
+    <meta name="keywords" content='quant, LLM, web3'>
+
+    <meta property="og:url" content="http://localhost:1313/posts/alphagpt-%E5%88%86%E6%9E%90/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AlphaGPT Analysis">
+    <meta property="og:description" content="介绍 AlphaGPT 是面向 Solana meme 生态的量化交易系统，采用分层流水线：
+从外部 API 采集行情与代币数据并写入 Postgres/Timescale。 特征工程 &#43; 公式生成训练（AlphaGPT 模型 &#43; StackVM &#43; 回测）。 AlphaGPT transformer模型 输出逆波兰的 …">
+    <meta property="og:image" content="http://localhost:1313/images/avatar.png">
+    <meta property="og:image:secure_url" content="http://localhost:1313/images/avatar.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AlphaGPT Analysis">
+    <meta name="twitter:description" content="介绍 AlphaGPT 是面向 Solana meme 生态的量化交易系统，采用分层流水线：
+从外部 API 采集行情与代币数据并写入 Postgres/Timescale。 特征工程 &#43; 公式生成训练（AlphaGPT 模型 &#43; StackVM &#43; 回测）。 AlphaGPT transformer模型 输出逆波兰的 …">
+    <meta property="twitter:domain" content="http://localhost:1313/posts/alphagpt-%E5%88%86%E6%9E%90/">
+    <meta property="twitter:url" content="http://localhost:1313/posts/alphagpt-%E5%88%86%E6%9E%90/">
+    <meta name="twitter:image" content="http://localhost:1313/images/avatar.png">
+
+    
+    <link rel="canonical" href="http://localhost:1313/posts/alphagpt-%E5%88%86%E6%9E%90/">
+
+    
+    <link rel="stylesheet" type="text/css" href="/css/normalize.min.css" media="print">
+
+    
+    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
+
+    
+    <link id="dark-theme" rel="stylesheet" href="/css/dark.min.css">
+
+    
+    <script src="/js/bundle.min.b49aceda9eb0c4a1c26f79dde146ea75e2cbb4b320dcd0e2623cb4c195ee7af6.js" integrity="sha256-tJrO2p6wxKHCb3nd4UbqdeLLtLMg3NDiYjy0wZXuevY="></script>
+
+    
+    
+
+    
+    <script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+        <script>
+            
+            setThemeByUserPref();
+        </script><header class="header">
+    <nav class="header-nav">
+
+        
+        <div class="avatar">
+            <a href="http://localhost:1313/">
+                <img src='/images/avatar.png' alt="Avatar">
+            </a>
+        </div>
+        
+
+        <div class="nav-title">
+            <a class="nav-brand" href="http://localhost:1313/">Lerr1uqs</a>
+        </div>
+
+        <div class="nav-links">
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/" aria-label="" ><span data-feather='home'></span> Home </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/posts/" aria-label="" ><span data-feather='pen-tool'></span> Posts </a>
+            </div>
+            
+            <div class="nav-link">
+                <a href="http://localhost:1313/tags/" aria-label="" ><span data-feather='tag'></span> Tags </a>
+            </div>
+            
+
+            <span class="nav-icons-divider"></span>
+            <div class="nav-link dark-theme-toggle">
+                <span class="sr-only dark-theme-toggle-screen-reader-target">theme</span>
+                <a aria-hidden="true" role="switch">
+                    <span class="theme-toggle-icon" data-feather="moon"></span>
+                </a>
+            </div>
+
+            <div class="nav-link" id="hamburger-menu-toggle">
+                <span class="sr-only hamburger-menu-toggle-screen-reader-target">menu</span>
+                <a aria-checked="false" aria-labelledby="hamburger-menu-toggle" id="hamburger-menu-toggle-target" role="switch">
+                    <span data-feather="menu"></span>
+                </a>
+            </div>
+
+            
+            <ul class="nav-hamburger-list visibility-hidden">
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/" ><span data-feather='home'></span> Home </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/posts/" ><span data-feather='pen-tool'></span> Posts </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="http://localhost:1313/tags/" ><span data-feather='tag'></span> Tags </a>
+                </li>
+                
+                <li class="nav-item dark-theme-toggle">
+                    <span class="sr-only dark-theme-toggle-screen-reader-target">theme</span>
+                    <a role="switch">
+                        <span class="theme-toggle-icon" data-feather="moon"></span>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+</header>
+<main id="content">
+    <div class="post container">
+    <div class="post-header-section">
+        <h1>AlphaGPT Analysis</h1>
+
+        
+
+        
+	
+	
+	
+	
+        
+
+	
+
+	
+
+	
+          <small role="doc-subtitle"></small>
+	
+
+	
+          <p class="post-date">
+              
+
+              March 14, 2026
+
+              
+                  | Updated March 14, 2026
+              
+          </p>
+	
+
+        <ul class="post-tags">
+          
+           
+             <li class="post-tag"><a href="http://localhost:1313/tags/quant">quant</a></li>
+           
+         
+           
+             <li class="post-tag"><a href="http://localhost:1313/tags/llm">LLM</a></li>
+           
+         
+           
+             <li class="post-tag"><a href="http://localhost:1313/tags/web3">web3</a></li>
+           
+         
+        </ul>
+    </div>
+
+    <div class="post-content">
+        <h1 id="介绍">介绍</h1>
+<p>AlphaGPT 是面向 Solana meme 生态的量化交易系统，采用分层流水线：</p>
+<ol>
+<li>从外部 API 采集行情与代币数据并写入 Postgres/Timescale。</li>
+<li>特征工程 + 公式生成训练（AlphaGPT 模型 + StackVM + 回测）。
+<ol>
+<li>AlphaGPT transformer模型 输出逆波兰的算子+特征算术表达式</li>
+<li>StackVM根据特征+表达式合成因子</li>
+<li>对因子建立position和turnover矩阵 从而计算回报率和最终得分</li>
+<li>利用得分进行策略梯度loss 反向传播给AlphaGPT</li>
+</ol>
+</li>
+<li>实盘交易循环：推理、风控、交易执行（Jupiter + Solana RPC）。</li>
+<li>监控看板：从数据库、状态文件与 RPC 读取数据进行展示。</li>
+</ol>
+<p>核心思想：模型不直接预测价格，而是生成公式 token 序列，由 <code>StackVM</code> 在特征张量上解释执行，输出信号用于回测与实盘决策。</p>
+<h1 id="组件架构图">组件架构图</h1>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">flowchart LR
+  subgraph External
+    BE[Birdeye API]
+    DS[DexScreener API - skeleton unused]
+    JUP[Jupiter API]
+    RPC[Solana RPC - QuickNode]
+    DB[(Postgres/Timescale)]
+  end
+
+  subgraph DataPipeline[data_pipeline]
+    DM[DataManager]
+    DBM[DBManager]
+    BP[BirdeyeProvider]
+    DSP[DexScreenerProvider - unused]
+  end
+
+  subgraph ModelCore[model_core]
+    CDL[CryptoDataLoader]
+    FE[FeatureEngineer]
+    VM[StackVM + OPS]
+    ENG[AlphaEngine]
+    BT[MemeBacktest]
+    STRAT[(best_meme_strategy.json)]
+    HIST[(training_history.json)]
+  end
+
+  subgraph Strategy[strategy_manager]
+    RUN[StrategyRunner]
+    RISK[RiskEngine]
+    PORT[PortfolioManager]
+    PORTFILE[(portfolio_state.json)]
+  end
+
+  subgraph Exec[execution]
+    TRADER[SolanaTrader]
+    JUPAG[JupiterAggregator]
+    QN[QuickNodeClient]
+  end
+
+  subgraph Dash[dashboard]
+    APP[Streamlit app]
+    SVC[DashboardService]
+  end
+
+  BE --&gt; BP --&gt; DM --&gt; DBM --&gt; DB
+  DS --&gt; DSP
+
+  DB --&gt; CDL --&gt; FE --&gt; VM
+  ENG --&gt; CDL
+  ENG --&gt; VM
+  ENG --&gt; BT
+  ENG --&gt; STRAT
+  ENG --&gt; HIST
+
+  STRAT --&gt; RUN
+  DB --&gt; RUN
+  RUN --&gt; RISK
+  RUN --&gt; PORT --&gt; PORTFILE
+  RUN --&gt; TRADER
+
+  TRADER --&gt; JUPAG --&gt; JUP
+  TRADER --&gt; QN --&gt; RPC
+  RISK --&gt; JUPAG
+
+  APP --&gt; SVC
+  SVC --&gt; DB
+  SVC --&gt; PORTFILE
+  SVC --&gt; STRAT
+  SVC --&gt; RPC
+</code></pre><ul>
+<li>birdeye.so: SUI和SOL链的热门数据平台 这里能获取defi交易代币和代币的ohlcv</li>
+<li>FDV = 当前代币价格 × 代币最大供应量（Maximum Supply）</li>
+<li>asyncpg： 是一个专为 PostgresQL 数据库设计的高性能、异步 Python 客户端库</li>
+<li><strong>DEX Screener</strong>：是一个功能强大的<strong>去中心化交易所（DEX）实时数据分析与聚合平台</strong> (备用数据源)</li>
+<li>TimescaleDB： 时序数据库</li>
+<li>Jupiter 在 <strong>Solana 生态</strong>里通常指 <strong>Jupiter Aggregator</strong>（一个 DEX 聚合器，用来找最优交易路径）。查询 token swap 报价</li>
+</ul>
+<h1 id="特征工程算子因子">特征工程(算子+因子)</h1>
+<p>用到的特征如下：</p>
+<ul>
+<li>returns 1m回报率</li>
+<li>returns的 20窗口的波动率</li>
+<li>交易量相比于20窗口滑动平均的比值</li>
+<li>收盘价大于60窗口滑动平均表示趋势 (boolean)</li>
+</ul>
+<p>数据清洗：</p>
+<ul>
+<li>正无穷和负无穷都替换为0</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>    <span style="color:#a6e22e">@staticmethod</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add_basic_factors</span>(df):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Log Returns</span>
+</span></span><span style="display:flex;"><span>        df[<span style="color:#e6db74">&#39;log_ret&#39;</span>] <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>log(df[<span style="color:#e6db74">&#39;close&#39;</span>] <span style="color:#f92672">/</span> df[<span style="color:#e6db74">&#39;close&#39;</span>]<span style="color:#f92672">.</span>shift(<span style="color:#ae81ff">1</span>))
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Realized Volatility</span>
+</span></span><span style="display:flex;"><span>        df[<span style="color:#e6db74">&#39;volatility&#39;</span>] <span style="color:#f92672">=</span> df[<span style="color:#e6db74">&#39;log_ret&#39;</span>]<span style="color:#f92672">.</span>rolling(window<span style="color:#f92672">=</span><span style="color:#ae81ff">20</span>)<span style="color:#f92672">.</span>std()
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Volume Shock</span>
+</span></span><span style="display:flex;"><span>        vol_ma <span style="color:#f92672">=</span> df[<span style="color:#e6db74">&#39;volume&#39;</span>]<span style="color:#f92672">.</span>rolling(window<span style="color:#f92672">=</span><span style="color:#ae81ff">20</span>)<span style="color:#f92672">.</span>mean() <span style="color:#f92672">+</span> <span style="color:#ae81ff">1e-6</span>
+</span></span><span style="display:flex;"><span>        df[<span style="color:#e6db74">&#39;vol_shock&#39;</span>] <span style="color:#f92672">=</span> df[<span style="color:#e6db74">&#39;volume&#39;</span>] <span style="color:#f92672">/</span> vol_ma
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Price Trend</span>
+</span></span><span style="display:flex;"><span>        ma_long <span style="color:#f92672">=</span> df[<span style="color:#e6db74">&#39;close&#39;</span>]<span style="color:#f92672">.</span>rolling(window<span style="color:#f92672">=</span><span style="color:#ae81ff">60</span>)<span style="color:#f92672">.</span>mean()
+</span></span><span style="display:flex;"><span>        df[<span style="color:#e6db74">&#39;trend&#39;</span>] <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>where(df[<span style="color:#e6db74">&#39;close&#39;</span>] <span style="color:#f92672">&gt;</span> ma_long, <span style="color:#ae81ff">1</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Robust Normalization</span>
+</span></span><span style="display:flex;"><span>        df <span style="color:#f92672">=</span> df<span style="color:#f92672">.</span>replace([np<span style="color:#f92672">.</span>inf, <span style="color:#f92672">-</span>np<span style="color:#f92672">.</span>inf], np<span style="color:#f92672">.</span>nan)<span style="color:#f92672">.</span>fillna(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> df
+</span></span></code></pre></div><p>作者的其他补充：</p>
+<ul>
+<li>主流程因子（FeatureEngineer，6 个）
+<ul>
+<li>ret：对数收益</li>
+<li>liq_score：流动性/FDV 健康度</li>
+<li>pressure：买卖力量不平衡</li>
+<li>fomo：成交量加速度</li>
+<li>dev：价格偏离均值</li>
+<li>log_vol：对数成交量</li>
+</ul>
+</li>
+<li>扩展因子（AdvancedFactorEngineer，12 个）
+<ul>
+<li>ret：对数收益</li>
+<li>liq_score：流动性/FDV 健康度</li>
+<li>pressure：买卖力量不平衡</li>
+<li>fomo：成交量加速度</li>
+<li>dev：价格偏离均值</li>
+<li>log_vol：对数成交量</li>
+<li>vol_cluster：波动率聚集</li>
+<li>momentum_rev：动量反转</li>
+<li>rel_strength：相对强弱（RSI 类）</li>
+<li>hl_range：高低价振幅</li>
+<li>close_pos：收盘在区间位置</li>
+<li>vol_trend：成交量趋势</li>
+</ul>
+</li>
+<li>算子（OPS_CONFIG，12 个）
+<ul>
+<li>ADD：加法</li>
+<li>SUB：减法</li>
+<li>MUL：乘法</li>
+<li>DIV：除法</li>
+<li>NEG：取负</li>
+<li>ABS：绝对值</li>
+<li>SIGN：符号</li>
+<li>GATE：门控选择（condition&gt;0 选 x，否则 y）</li>
+<li>JUMP：极端跳变检测（zscore&gt;3）</li>
+<li>DECAY：衰减叠加（t + 0.8<em>lag1 + 0.6</em>lag2）</li>
+<li>DELAY1：滞后 1</li>
+<li>MAX3：当前/滞后1/滞后2 最大值</li>
+</ul>
+</li>
+</ul>
+<h1 id="训练时序图">训练时序图</h1>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">sequenceDiagram
+  participant DB as Postgres
+  participant Loader as CryptoDataLoader
+  participant Model as AlphaGPT
+  participant VM as StackVM
+  participant BT as MemeBacktest
+  participant File as best_meme_strategy.json
+
+  DB-&gt;&gt;Loader: load tokens + ohlcv
+  Loader-&gt;&gt;Loader: build feat_tensor + target_ret
+  loop TRAIN_STEPS
+    Model-&gt;&gt;Model: sample formula token sequence
+    Model-&gt;&gt;VM: execute formula on feat_tensor
+    VM--&gt;&gt;BT: factors/signal
+    BT--&gt;&gt;Model: reward score
+    Model-&gt;&gt;Model: REINFORCE update
+  end
+  Model-&gt;&gt;File: write best formula
+</code></pre><h1 id="补充梳理">补充梳理</h1>
+<h2 id="入口">入口</h2>
+<p>AlphaEngine</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>    eng <span style="color:#f92672">=</span> AlphaEngine(use_lord_regularization<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    eng<span style="color:#f92672">.</span>train()
+</span></span></code></pre></div><h2 id="模型自回归输出">模型自回归输出</h2>
+<p>模型的每一次输出都会append到输入 和LLM实现一样。</p>
+<p><code>inp = torch.zeros((bs, 1), ...)</code> 每一个batch的初始都为一个token 然后慢慢concat进来。</p>
+<p>模型的输出为： <code>[B, vocab_size]</code> 采样后unsqueeze后 就是<code>[B, 1]</code> 沿着token的方向去concat 最终得到 <code>(B, MAX_FORMULA_LEN)</code> 的shape</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>            inp <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>zeros((bs, <span style="color:#ae81ff">1</span>), dtype<span style="color:#f92672">=</span>torch<span style="color:#f92672">.</span>long, device<span style="color:#f92672">=</span>ModelConfig<span style="color:#f92672">.</span>DEVICE)
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            log_probs <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>            tokens_list <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(ModelConfig<span style="color:#f92672">.</span>MAX_FORMULA_LEN):
+</span></span><span style="display:flex;"><span>                logits, _, _ <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>model(inp)
+</span></span><span style="display:flex;"><span>                dist <span style="color:#f92672">=</span> Categorical(logits<span style="color:#f92672">=</span>logits)
+</span></span><span style="display:flex;"><span>                action <span style="color:#f92672">=</span> dist<span style="color:#f92672">.</span>sample()
+</span></span><span style="display:flex;"><span>                
+</span></span><span style="display:flex;"><span>                log_probs<span style="color:#f92672">.</span>append(dist<span style="color:#f92672">.</span>log_prob(action))
+</span></span><span style="display:flex;"><span>                tokens_list<span style="color:#f92672">.</span>append(action)
+</span></span><span style="display:flex;"><span>                inp <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>cat([inp, action<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>)], dim<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span></code></pre></div><h2 id="输出token编码规则">输出token编码规则</h2>
+<p>token 编码规则</p>
+<ul>
+<li>feat_offset = FeatureEngineer.INPUT_DIM = 6，见 factors.py:157。</li>
+<li>token &lt; 6：特征 token（0~5）。</li>
+<li>token &gt;= 6：算子 token（由 OPS_CONFIG 映射，6~17）。</li>
+</ul>
+<p>简单来说 特征有：returns, liquidity, buy_sell_imbalance 等基础因子</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>        features <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>stack([
+</span></span><span style="display:flex;"><span>            robust_norm(ret),
+</span></span><span style="display:flex;"><span>            liq_score,
+</span></span><span style="display:flex;"><span>            pressure,
+</span></span><span style="display:flex;"><span>            robust_norm(fomo),
+</span></span><span style="display:flex;"><span>            robust_norm(dev),
+</span></span><span style="display:flex;"><span>            robust_norm(log_vol)
+</span></span><span style="display:flex;"><span>        ], dim<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span></code></pre></div><p>算子有：</p>
+<pre tabindex="0"><code>OPS_CONFIG = [
+    (&#39;ADD&#39;, lambda x, y: x + y, 2),
+    (&#39;SUB&#39;, lambda x, y: x - y, 2),
+    (&#39;MUL&#39;, lambda x, y: x * y, 2),
+    (&#39;DIV&#39;, lambda x, y: x / (y + 1e-6), 2),
+    (&#39;NEG&#39;, lambda x: -x, 1),
+    (&#39;ABS&#39;, torch.abs, 1),
+    (&#39;SIGN&#39;, torch.sign, 1),
+    (&#39;GATE&#39;, _op_gate, 3),
+    (&#39;JUMP&#39;, _op_jump, 1),
+    (&#39;DECAY&#39;, _op_decay, 1),
+    (&#39;DELAY1&#39;, lambda x: _ts_delay(x, 1), 1),
+    (&#39;MAX3&#39;, lambda x: torch.max(x, torch.max(_ts_delay(x,1), _ts_delay(x,2))), 1)
+]
+</code></pre><p>最终模型的输出差不多为：<code>[feat1, feat2, op1, feat3, feat4, feat5, op2, ...]</code> 一个op跟着所需要的N个特征</p>
+<p>编码采用 - Reverse Polish Notation (RPN)，逆波兰表示法: <code>a b + c *</code></p>
+<p>一个op和多个特征计算完成后会重新入栈 作为新的参数</p>
+<h2 id="输出token的计算与评估">输出token的计算与评估</h2>
+<p>大模型输出逆波兰表达式的token后 通过栈去得到对应特征计算出来的一个新特征值</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>                res <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>vm<span style="color:#f92672">.</span>execute(formula, self<span style="color:#f92672">.</span>loader<span style="color:#f92672">.</span>feat_tensor)
+</span></span><span style="display:flex;"><span>                
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> res <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>                    rewards[i] <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">5.0</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>                
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> res<span style="color:#f92672">.</span>std() <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">1e-4</span>:
+</span></span><span style="display:flex;"><span>                    rewards[i] <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">2.0</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">continue</span>
+</span></span></code></pre></div><p>然后评估该新因子</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>                score, ret_val <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>bt<span style="color:#f92672">.</span>evaluate(res, self<span style="color:#f92672">.</span>loader<span style="color:#f92672">.</span>raw_data_cache, self<span style="color:#f92672">.</span>loader<span style="color:#f92672">.</span>target_ret)
+</span></span><span style="display:flex;"><span>                rewards[i] <span style="color:#f92672">=</span> score
+</span></span></code></pre></div><p>评估有一些trick和乘法 主要逻辑如下</p>
+<ul>
+<li>score = cum_ret - (big_drawdowns * 2.0) 以收益率和最大回撤作为得分标准 也就是reward</li>
+<li>final_fitness = torch.median(score) 是“单个公式在多个币上的鲁棒汇总分”</li>
+<li>position 矩阵表示某一时刻某一代币是否持仓 如果持仓就可以计算本次持仓一次后的单次收益</li>
+<li>turnover 矩阵表示某一时刻某一代币是否换手 用于计算交易费用和冲击成本</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">evaluate</span>(self, factors, raw_data, target_ret):
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;&#39;&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - factors: StackVM.execute() 的输出，shape 为 [N, T]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - N = 代币数量（训练时通常 limit_tokens=500）
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - T = 时间步数（由 ohlcv 历史长度决定）也就是全部时间
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - raw_data: CryptoDataLoader.raw_data_cache 字典, 也就是各个特征， ohlcv liq fdv等，各字段均为 [N, T]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - target_ret: CryptoDataLoader.target_ret，也就是log(t2/t1), shape 为 [N, T]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>        liquidity <span style="color:#f92672">=</span> raw_data[<span style="color:#e6db74">&#39;liquidity&#39;</span>]
+</span></span><span style="display:flex;"><span>        signal <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>sigmoid(factors) <span style="color:#75715e"># sigmoid压缩factor，使其在0到1之间 而不是做rank</span>
+</span></span><span style="display:flex;"><span>        is_safe <span style="color:#f92672">=</span> (liquidity <span style="color:#f92672">&gt;</span> self<span style="color:#f92672">.</span>min_liq)<span style="color:#f92672">.</span>float()
+</span></span><span style="display:flex;"><span>        position <span style="color:#f92672">=</span> (signal <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.85</span>)<span style="color:#f92672">.</span>float() <span style="color:#f92672">*</span> is_safe <span style="color:#75715e"># 在某个时间点只持仓因子大于0.85的，且要求流动性</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 计算滑点: 按流动性估算冲击成本</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># - self.trade_size：单笔交易的名义金额</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># - liquidity：流动性 一般是订单深度（Order Book Depth）</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># - impact_slippage：用“下单规模占流动性的比例”来近似冲击成本。</span>
+</span></span><span style="display:flex;"><span>        impact_slippage <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>trade_size <span style="color:#f92672">/</span> (liquidity <span style="color:#f92672">+</span> <span style="color:#ae81ff">1e-9</span>)
+</span></span><span style="display:flex;"><span>        impact_slippage <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>clamp(impact_slippage, <span style="color:#ae81ff">0.0</span>, <span style="color:#ae81ff">0.05</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        total_slippage_one_way <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>base_fee <span style="color:#f92672">+</span> impact_slippage
+</span></span><span style="display:flex;"><span>        prev_pos <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>roll(position, <span style="color:#ae81ff">1</span>, dims<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        prev_pos[:, <span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 换手矩阵：1代表换手（即有仓位变化），0代表不换手</span>
+</span></span><span style="display:flex;"><span>        turnover <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>abs(position <span style="color:#f92672">-</span> prev_pos)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        tx_cost <span style="color:#f92672">=</span> turnover <span style="color:#f92672">*</span> total_slippage_one_way <span style="color:#75715e"># 交易成本矩阵</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># position == 1 当前这根的信号已经出来了 下一根开盘买入 </span>
+</span></span><span style="display:flex;"><span>        gross_pnl <span style="color:#f92672">=</span> position <span style="color:#f92672">*</span> target_ret <span style="color:#75715e"># 下下根开盘 / 下一根开盘 的收益</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        net_pnl <span style="color:#f92672">=</span> gross_pnl <span style="color:#f92672">-</span> tx_cost
+</span></span><span style="display:flex;"><span>        cum_ret <span style="color:#f92672">=</span> net_pnl<span style="color:#f92672">.</span>sum(dim<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># big_drawdowns 是统计“单根 K 线净收益小于 -0.05”的次数</span>
+</span></span><span style="display:flex;"><span>        big_drawdowns <span style="color:#f92672">=</span> (net_pnl <span style="color:#f92672">&lt;</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">0.05</span>)<span style="color:#f92672">.</span>float()<span style="color:#f92672">.</span>sum(dim<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        score <span style="color:#f92672">=</span> cum_ret <span style="color:#f92672">-</span> (big_drawdowns <span style="color:#f92672">*</span> <span style="color:#ae81ff">2.0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 活跃度：持仓的k线数</span>
+</span></span><span style="display:flex;"><span>        activity <span style="color:#f92672">=</span> position<span style="color:#f92672">.</span>sum(dim<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        score <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>where(activity <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">5</span>, torch<span style="color:#f92672">.</span>tensor(<span style="color:#f92672">-</span><span style="color:#ae81ff">10.0</span>, device<span style="color:#f92672">=</span>score<span style="color:#f92672">.</span>device), score)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 这是把所有 token 的 score 取中位数，作为最终 fitness（训练 reward）</span>
+</span></span><span style="display:flex;"><span>        final_fitness <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>median(score)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> final_fitness, cum_ret<span style="color:#f92672">.</span>mean()<span style="color:#f92672">.</span>item()
+</span></span></code></pre></div><h2 id="强化学习算法">强化学习算法</h2>
+<ul>
+<li>使用策略梯度</li>
+<li>用本轮得分的rewards的标准化作为评价标准 (batch比较小的时候标准化会抖动 这里是8000+)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>            <span style="color:#75715e"># Normalize rewards</span>
+</span></span><span style="display:flex;"><span>            adv <span style="color:#f92672">=</span> (rewards <span style="color:#f92672">-</span> rewards<span style="color:#f92672">.</span>mean()) <span style="color:#f92672">/</span> (rewards<span style="color:#f92672">.</span>std() <span style="color:#f92672">+</span> <span style="color:#ae81ff">1e-5</span>)
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            loss <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> t <span style="color:#f92672">in</span> range(len(log_probs)):
+</span></span><span style="display:flex;"><span>                loss <span style="color:#f92672">+=</span> <span style="color:#f92672">-</span>log_probs[t] <span style="color:#f92672">*</span> adv
+</span></span></code></pre></div><h2 id="记录数据">记录数据</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>training_history[<span style="color:#e6db74">&#39;step&#39;</span>]<span style="color:#f92672">.</span>append(step)
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>training_history[<span style="color:#e6db74">&#39;avg_reward&#39;</span>]<span style="color:#f92672">.</span>append(avg_reward)
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>training_history[<span style="color:#e6db74">&#39;best_score&#39;</span>]<span style="color:#f92672">.</span>append(self<span style="color:#f92672">.</span>best_score)
+</span></span></code></pre></div><h2 id="alphagpt模型">AlphaGPT模型</h2>
+<h3 id="架构图">架构图</h3>
+<p><img src="/images/AlphaGPT_Architecture.svg" alt="AlphaGPT_Architecture"></p>
+<h3 id="词表大小">词表大小</h3>
+<p>也就是特征数量+算子数量</p>
+<h3 id="qknorm">qknorm</h3>
+<p>• QKNorm 的设计目的是让 Attention 的 Q/K 先做单位化，再乘一个可学习缩放，稳定 softmax logits 的尺度。</p>
+<p>它做的事（数学上）：</p>
+<ol>
+<li>q_norm = normalize(q, p=2, dim=-1)</li>
+<li>k_norm = normalize(k, p=2, dim=-1)</li>
+<li>返回 q_norm * scale, k_norm * scale，其中 scale 是可学习参数（初始约 1/sqrt(d_head)）</li>
+</ol>
+<p>目的：</p>
+<ul>
+<li>不让 Q/K 范数乱飘，减少注意力分数过大/过小。</li>
+<li>让模型自己学“该放大还是缩小”注意力温度。</li>
+</ul>
+<p>代码中：</p>
+<ul>
+<li>没有使用qknorm forward里直接走的多头注意力</li>
+</ul>
+<h3 id="loopedtransformerlayer">LoopedTransformerLayer</h3>
+<p>本质：</p>
+<ul>
+<li>resnet[norm -&gt; attention -&gt; dropout -&gt; norm -&gt; ffn -&gt; dropout] * N</li>
+<li>SwiGLU 内部封装了先升维 再降维</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LoopedTransformerLayer</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Looped Transformer Layer - recurrent processing within a layer&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, d_model, nhead, dim_feedforward, num_loops<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>, dropout<span style="color:#f92672">=</span><span style="color:#ae81ff">0.1</span>):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>num_loops <span style="color:#f92672">=</span> num_loops
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>d_model <span style="color:#f92672">=</span> d_model
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>nhead <span style="color:#f92672">=</span> nhead
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># QK-Norm attention</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>qk_norm <span style="color:#f92672">=</span> QKNorm(d_model <span style="color:#f92672">//</span> nhead)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Standard attention components</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>attention <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>MultiheadAttention(d_model, nhead, batch_first<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, dropout<span style="color:#f92672">=</span>dropout)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># RMSNorm instead of LayerNorm</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>norm1 <span style="color:#f92672">=</span> RMSNorm(d_model)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>norm2 <span style="color:#f92672">=</span> RMSNorm(d_model)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># SwiGLU FFN instead of standard FFN</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>ffn <span style="color:#f92672">=</span> SwiGLU(d_model, dim_feedforward)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>dropout <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Dropout(dropout)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x, mask<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>, is_causal<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Looped processing - recurrent refinement</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(self<span style="color:#f92672">.</span>num_loops):
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># Self-attention with residual</span>
+</span></span><span style="display:flex;"><span>            x_norm <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>norm1(x)
+</span></span><span style="display:flex;"><span>            attn_out, _ <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>attention(x_norm, x_norm, x_norm, attn_mask<span style="color:#f92672">=</span>mask, is_causal<span style="color:#f92672">=</span>is_causal)
+</span></span><span style="display:flex;"><span>            x <span style="color:#f92672">=</span> x <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>dropout(attn_out)
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># FFN with residual</span>
+</span></span><span style="display:flex;"><span>            x_norm <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>norm2(x)
+</span></span><span style="display:flex;"><span>            ffn_out <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>ffn(x_norm)
+</span></span><span style="display:flex;"><span>            x <span style="color:#f92672">=</span> x <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>dropout(ffn_out)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x
+</span></span></code></pre></div><h3 id="alphagpt-模型注释">AlphaGPT 模型注释</h3>
+<ul>
+<li>这里就是传统的transformer 没有什么大创新</li>
+<li>MTP这里就是轻量级的MoE 提供一个多路选择输出 MTP中输出的3个任务要经过softmax 也就是输出的权重 最终得到的结果是多个task的logprobs的加权和 其实也就是多一个路由</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AlphaGPT</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>d_model <span style="color:#f92672">=</span> <span style="color:#ae81ff">64</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>features_list <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;RET&#39;</span>, <span style="color:#e6db74">&#39;VOL&#39;</span>, <span style="color:#e6db74">&#39;V_CHG&#39;</span>, <span style="color:#e6db74">&#39;PV&#39;</span>, <span style="color:#e6db74">&#39;TREND&#39;</span>]
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>ops_list <span style="color:#f92672">=</span> [cfg[<span style="color:#ae81ff">0</span>] <span style="color:#66d9ef">for</span> cfg <span style="color:#f92672">in</span> OPS_CONFIG]
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>vocab <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>features_list <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>ops_list
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>vocab_size <span style="color:#f92672">=</span> len(self<span style="color:#f92672">.</span>vocab)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Embedding</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>token_emb <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Embedding(self<span style="color:#f92672">.</span>vocab_size, self<span style="color:#f92672">.</span>d_model)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>pos_emb <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Parameter(torch<span style="color:#f92672">.</span>zeros(<span style="color:#ae81ff">1</span>, ModelConfig<span style="color:#f92672">.</span>MAX_FORMULA_LEN <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, self<span style="color:#f92672">.</span>d_model))
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Enhanced Transformer with Looped Transformer</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>blocks <span style="color:#f92672">=</span> LoopedTransformer(
+</span></span><span style="display:flex;"><span>            d_model<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>d_model,
+</span></span><span style="display:flex;"><span>            nhead<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span>,
+</span></span><span style="display:flex;"><span>            num_layers<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>            dim_feedforward<span style="color:#f92672">=</span><span style="color:#ae81ff">128</span>,
+</span></span><span style="display:flex;"><span>            num_loops<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>            dropout<span style="color:#f92672">=</span><span style="color:#ae81ff">0.1</span>
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># RMSNorm instead of LayerNorm</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>ln_f <span style="color:#f92672">=</span> RMSNorm(self<span style="color:#f92672">.</span>d_model)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># MTPHead for multi-task output</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>mtp_head <span style="color:#f92672">=</span> MTPHead(self<span style="color:#f92672">.</span>d_model, self<span style="color:#f92672">.</span>vocab_size, num_tasks<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>head_critic <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Linear(self<span style="color:#f92672">.</span>d_model, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, idx):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># idx: [Batch, SeqLen]</span>
+</span></span><span style="display:flex;"><span>        B, T <span style="color:#f92672">=</span> idx<span style="color:#f92672">.</span>size()
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># [B, T, D] + [1, :T, D](广播)</span>
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>token_emb(idx) <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>pos_emb[:, :T, :]
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Causal Mask</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># mask shape [T, T] 下三角掩码</span>
+</span></span><span style="display:flex;"><span>        mask <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Transformer<span style="color:#f92672">.</span>generate_square_subsequent_mask(T)<span style="color:#f92672">.</span>to(idx<span style="color:#f92672">.</span>device)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Process through looped transformer</span>
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>blocks(x, mask<span style="color:#f92672">=</span>mask, is_causal<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>ln_f(x)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        last_emb <span style="color:#f92672">=</span> x[:, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, :] <span style="color:#75715e"># [B, D]</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Multi-task pooling head for logits</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># MTP就是轻量级的MoE </span>
+</span></span><span style="display:flex;"><span>        logits, task_probs <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>mtp_head(last_emb) <span style="color:#75715e"># [B, vocab_size], [B, num_tasks] </span>
+</span></span><span style="display:flex;"><span>        value <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>head_critic(last_emb)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> logits, value, task_probs
+</span></span></code></pre></div><h3 id="模型架构文字表示">模型架构文字表示</h3>
+<pre tabindex="0"><code>Input idx [B,T]
+      ↓
+Token Embedding + Position Embedding
+      ↓
+LoopedTransformer
+  • 2 Layers
+  • 每层循环 3 次
+  • Multihead Attention
+  • SwiGLU FFN
+      ↓
+RMSNorm
+      ↓
+Last Token Pooling
+      ↓
+ ├─ MTPHead (3任务 router)
+ │      → logits
+ │      → task_probs
+ │
+ └─ Value Head
+        → value
+</code></pre><h3 id="lord-low-rank-decay">LoRD (Low-Rank Decay)</h3>
+<ul>
+<li><a href="https://github.com/Chunjiang-Intelligence/low-rank-decay">GitHub - Chunjiang-Intelligence/low-rank-decay: 「Low-Rank Decay」的官方实现。 · GitHub</a></li>
+</ul>
+<p>基本概念：</p>
+<ul>
+<li>**正则化（Regularization）就是：**在训练模型时 <strong>人为加一个限制规则</strong>，防止模型太复杂，从而减少过拟合。</li>
+<li>L2正则化：loss = 原始loss + λ * 所有参数平方和 # 对权重大小做限制 作为<code>optim.SGD</code> 的 <code>weight_decay</code>参数</li>
+<li>LoRD 控制的不是权重大小 而是矩阵结构 或者说 矩阵的秩</li>
+<li>LoRD让矩阵变成低秩 限制权重表达的自由度 就能让模型学会普适规律而不是死记硬背数据</li>
+<li>LoRD正则化：对矩阵的秩做惩罚加入loss中</li>
+</ul>
+<p>LoRD 训练：</p>
+<pre tabindex="0"><code>W = W - lr * (gradient + λ * low_rank_gradient)
+</code></pre><p>加入low_rank_gradient有利于减小rank</p>
+<p>但是：</p>
+<ul>
+<li>求解矩阵的秩需要进行SVD 计算复杂度是O3</li>
+</ul>
+<p>所以：</p>
+<ul>
+<li>采用牛顿迭代法</li>
+<li>这部分暂时不涉猎了 超纲了</li>
+</ul>
+
+        
+    </div>
+
+    <div class="prev-next">
+        
+    </div>
+
+    
+    
+    
+</div>
+
+
+  
+<script type="module">  
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'; 
+    mermaid.initialize({ startOnLoad: true });  
+</script>  
+<script>  
+    
+    Array.from(document.getElementsByClassName("language-mermaid")).forEach(  
+        (el) => {  
+            el.parentElement.outerHTML = `<div class="mermaid">${el.innerHTML}</div>`;  
+        }  
+    );  
+</script>  
+<style>  
+       
+    .mermaid svg {  
+        display: block;  
+        margin: auto;  
+    }  
+</style>  
+
+
+    
+
+        </main><footer class="footer">
+    
+    
+
+    
+
+    
+
+    
+
+    <span>
+        Made with &#10084;&#65039; using <a target="_blank" href="https://github.com/gokarna-theme/gokarna-hugo">Gokarna</a>
+    </span>
+</footer>
+</body>
+</html>

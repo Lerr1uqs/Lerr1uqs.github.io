@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>黑盒优化 on Lerr1uqs</title>
+    <link>http://localhost:1313/tags/%E9%BB%91%E7%9B%92%E4%BC%98%E5%8C%96/</link>
+    <description>Recent content in 黑盒优化 on Lerr1uqs</description>
+    <generator>Hugo</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 28 Mar 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/%E9%BB%91%E7%9B%92%E4%BC%98%E5%8C%96/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>openclaw pwnkit 实现原理</title>
+      <link>http://localhost:1313/posts/openclaw-pwnkit-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Sat, 28 Mar 2026 16:48:35 +0800</pubDate>
+      <guid>http://localhost:1313/posts/openclaw-pwnkit-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <description>&lt;h1 id=&#34;项目摘要&#34;&gt;项目摘要&lt;/h1&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;目的&lt;/strong&gt;: 在向量空间中训练优化一组恶意token序列，从而使其能够最大程度的诱导openai模型使用bash工具执行攻击者的恶意指令&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;核心功能&lt;/strong&gt;: (指的关注的只有CMA-ES方式)&#xA;&lt;ol&gt;&#xA;&lt;li&gt;&lt;strong&gt;CMA-ES优化引擎&lt;/strong&gt;: 在没有模型内部参数（梯度）的情况下，自动搜索能触发恶意行为的&amp;quot;魔法咒语&amp;quot;&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;蜜饵网页生成&lt;/strong&gt;: 创建伪装成技术博客的网页，内藏恶意触发词&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;后渗透控制台&lt;/strong&gt;: 被攻陷的Agent可通过Webhook回连，接受攻击者指令&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h1 id=&#34;系统架构&#34;&gt;系统架构&lt;/h1&gt;&#xA;&lt;p&gt;我这里剔除了后渗透阶段 只保留了cmaes训练阶段&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;./attachments/cmaes_architecture.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;外部依赖&#34;&gt;外部依赖&lt;/h1&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;使用开源的 Phi-2 模型（Microsoft, 2.7B 参数）作为代理模型，仅用于提供词向量空间（embedding matrix），不做任何训练或微调&lt;/li&gt;&#xA;&lt;li&gt;gpt-4-turbo openai api 作为被测模型 进行攻击评估 做logprobs收集&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h1 id=&#34;cma-es算法&#34;&gt;CMA-ES算法&lt;/h1&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;这里只当做黑盒了解如何使用&#xA;&lt;ul&gt;&#xA;&lt;li&gt;核心抽象: 无梯度随机优化方法 通过对向量进行无量纲纯比较的数值打分 以纯黑盒的优化一组向量&lt;/li&gt;&#xA;&lt;li&gt;输出: popsize组向量&lt;/li&gt;&#xA;&lt;li&gt;优化迭代: 输出向量和对应的打分&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;核心思想：通过不断调整多元正态分布的 均值、协方差矩阵 和 步长，使采样点逐代向最优解区域收敛&lt;/li&gt;&#xA;&lt;li&gt;变动参数: xᵢ = m + σ · N(0, C) 调整 m(分布均值) sigma(步长) C(协方差矩阵)&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;CMA-ES与phi-2embedding的使用&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;抽取出phi2 embedding: 50000×2560 的矩阵，每行是一个词的 2560 维向量 建立一个faiss向量库&lt;/li&gt;&#xA;&lt;li&gt;PCA对 2560 维向量 降维到 128 也就是50000×128矩阵&lt;/li&gt;&#xA;&lt;li&gt;es当做黑盒 每一轮输出popsize个 128 * token_len 维度的向量 (triggerlen * pca_dims, popsize)&lt;/li&gt;&#xA;&lt;li&gt;cmaes本质是优化一个N维向量输出&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;seed_token = self.tokenizer.encode(&amp;#34;IGNORE&amp;#34;)[0]&#xD;&#xA;seed_reduced = self.E_reduced[seed_token]    # 降维到128&#xD;&#xA;m0 = np.tile(seed_reduced, self.trigger_len) # 向量维度 * trigger_len次(10)&#xD;&#xA;sigma0 = 0.5&#xD;&#xA;&#xD;&#xA;es = cma.CMAEvolutionStrategy(m0, sigma0, {&#xD;&#xA;&#x9;&amp;#39;popsize&amp;#39;: popsize,&#xD;&#xA;    &amp;#39;verb_disp&amp;#39;: 1,&#xD;&#xA;    &amp;#39;CMA_diagonal&amp;#39;: True,&#xD;&#xA;})&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;具体步骤:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
